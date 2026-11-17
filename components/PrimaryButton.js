@@ -7,13 +7,13 @@ import { colors, radii, shadows, sizes, spacing, typography } from '../theme';
 const VARIANT_STYLES = {
   primary: {
     container: {
-      backgroundColor: colors.primary,
-      borderColor: colors.primary,
+      backgroundColor: colors.accent,
+      borderColor: colors.accent,
       ...shadows.pill,
     },
-    label: { color: colors.textOnPrimary },
-    icon: colors.textOnPrimary,
-    spinner: colors.textOnPrimary,
+    label: { color: colors.textOnAccent },
+    icon: colors.textOnAccent,
+    spinner: colors.textOnAccent,
   },
   secondary: {
     container: {
@@ -45,13 +45,15 @@ const VARIANT_STYLES = {
 };
 
 /**
- * Botón principal de la app con estado de carga y microinteracción táctil.
- * Altura mínima de 52 px (> 44 px) y estado deshabilitado accesible.
+ * Botón de acción principal. La variante `primary` usa el verde lima
+ * de la marca con tinta verde bosque (contraste 7.8:1) y una
+ * microinteracción de escala al presionar. Altura 54 px.
  */
 export default function PrimaryButton({
   label,
   onPress,
   icon,
+  iconPosition = 'left',
   variant = 'primary',
   loading = false,
   disabled = false,
@@ -61,35 +63,33 @@ export default function PrimaryButton({
 }) {
   const config = VARIANT_STYLES[variant] ?? VARIANT_STYLES.primary;
   const isInactive = disabled || loading;
+  const iconNode = loading ? (
+    <ActivityIndicator size="small" color={config.spinner} />
+  ) : icon ? (
+    <Ionicons name={icon} size={sizes.iconMd} color={config.icon} />
+  ) : null;
 
   return (
     <PressableScale
       onPress={onPress}
       disabled={isInactive}
+      pressedScale={0.98}
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled: isInactive, busy: loading }}
       testID={testID}
-      style={[
-        styles.base,
-        config.container,
-        isInactive && styles.inactive,
-        style,
-      ]}
+      style={[styles.base, config.container, isInactive && styles.inactive, style]}
     >
       <View style={styles.content}>
-        {loading ? (
-          <ActivityIndicator size="small" color={config.spinner} />
-        ) : icon ? (
-          <Ionicons name={icon} size={sizes.iconMd} color={config.icon} />
-        ) : null}
+        {iconPosition === 'left' ? iconNode : null}
         <Text
           style={[styles.label, config.label, isInactive && styles.inactiveLabel]}
           numberOfLines={1}
         >
           {label}
         </Text>
+        {iconPosition === 'right' ? iconNode : null}
       </View>
     </PressableScale>
   );

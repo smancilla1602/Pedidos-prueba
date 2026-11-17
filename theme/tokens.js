@@ -1,8 +1,9 @@
+import { Platform } from 'react-native';
 import { colors } from './colors';
 
 /**
  * Tokens de espacio, radio, tipografía y movimiento.
- * Escala base de 4 px para ritmo vertical consistente (SKILL prioridad 5 y 6).
+ * Escala base de 4 px para un ritmo vertical matemáticamente consistente.
  */
 export const spacing = {
   xs: 4,
@@ -14,6 +15,7 @@ export const spacing = {
   xxxl: 32,
   huge: 40,
   giant: 56,
+  mega: 64,
 };
 
 export const radii = {
@@ -26,9 +28,9 @@ export const radii = {
 };
 
 export const sizes = {
-  minTouchTarget: 44, // mínimo táctil accesible (SKILL prioridad 2)
-  control: 52, // altura de botones
-  input: 54, // altura del contenedor de campo
+  minTouchTarget: 44, // mínimo táctil accesible
+  control: 54, // altura de botones
+  input: 56, // altura del contenedor de campo
   iconSm: 14,
   iconMd: 20,
   iconLg: 24,
@@ -36,20 +38,32 @@ export const sizes = {
 };
 
 /**
- * Escala tipográfica: base 16 px y line-height 1.5 en texto corrido.
+ * Dos voces tipográficas: serif editorial para titulares (Georgia en
+ * iOS/Web, serif del sistema en Android) y sans del sistema para la
+ * interfaz y los formularios.
  */
+export const fonts = {
+  display: Platform.select({
+    ios: 'Georgia',
+    android: 'serif',
+    default: 'Georgia',
+  }),
+};
+
 export const typography = {
   display: {
-    fontSize: 30,
-    lineHeight: 36,
-    fontWeight: '700',
-    letterSpacing: -0.6,
+    fontFamily: fonts.display,
+    fontSize: 36,
+    lineHeight: 42,
+    fontWeight: '400',
+    letterSpacing: -0.8,
   },
   title: {
-    fontSize: 24,
-    lineHeight: 30,
-    fontWeight: '700',
-    letterSpacing: -0.3,
+    fontFamily: fonts.display,
+    fontSize: 26,
+    lineHeight: 32,
+    fontWeight: '400',
+    letterSpacing: -0.4,
   },
   subtitle: {
     fontSize: 18,
@@ -59,7 +73,7 @@ export const typography = {
   },
   body: {
     fontSize: 16,
-    lineHeight: 24,
+    lineHeight: 26,
     fontWeight: '400',
   },
   bodyStrong: {
@@ -71,17 +85,32 @@ export const typography = {
     fontSize: 14,
     lineHeight: 20,
     fontWeight: '600',
+    letterSpacing: 0.1,
+  },
+  fieldLabel: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: '600',
+    letterSpacing: 0.3,
   },
   caption: {
     fontSize: 13,
-    lineHeight: 19,
+    lineHeight: 20,
     fontWeight: '400',
   },
   overline: {
     fontSize: 12,
     lineHeight: 16,
     fontWeight: '700',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  address: {
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '600',
     letterSpacing: 1.6,
+    textTransform: 'uppercase',
   },
   button: {
     fontSize: 16,
@@ -89,19 +118,27 @@ export const typography = {
     fontWeight: '700',
     letterSpacing: 0.2,
   },
+  wordmark: {
+    fontFamily: fonts.display,
+    fontSize: 17,
+    lineHeight: 22,
+    fontWeight: '700',
+    letterSpacing: -0.2,
+  },
 };
 
 export const layout = {
-  maxContentWidth: 480,
-  minHorizontalPadding: spacing.xl,
-  maxHorizontalPadding: spacing.xxxl,
+  maxContentWidth: 460, // columna única (móvil y tablet vertical)
+  wideContentWidth: 1040, // split editorial en pantallas anchas
+  formColumnWidth: 440,
+  minHorizontalPadding: spacing.xxl,
+  maxHorizontalPadding: spacing.giant,
   cardPaddingCompact: spacing.xxl,
   cardPaddingWide: spacing.xxxl,
 };
 
 /**
- * Duraciones de movimiento. La salida es más rápida que la entrada
- * (SKILL prioridad 7: exit-faster-than-enter).
+ * Duraciones de movimiento. La salida es más rápida que la entrada.
  */
 export const motion = {
   fast: 140,
@@ -116,23 +153,23 @@ export const motion = {
 export const shadows = {
   card: {
     shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.08,
-    shadowRadius: 26,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.06,
+    shadowRadius: 30,
+    elevation: 3,
   },
   raised: {
     shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.14,
-    shadowRadius: 32,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 18 },
+    shadowOpacity: 0.1,
+    shadowRadius: 36,
+    elevation: 6,
   },
   pill: {
     shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
-    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.14,
+    shadowRadius: 8,
     elevation: 3,
   },
 };

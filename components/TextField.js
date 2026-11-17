@@ -5,12 +5,9 @@ import PressableScale from './PressableScale';
 import { colors, radii, sizes, spacing, typography } from '../theme';
 
 /**
- * Campo de texto con etiqueta visible, icono, error inline y
- * botón para mostrar/ocultar contraseña (44x44 px).
- *
- * - Etiqueta siempre arriba del input (nunca solo placeholder).
- * - El error se anuncia con accessibilityLiveRegion="polite".
- * - En web agrega un anillo de foco con el verde lima de la marca.
+ * Campo de texto editorial: etiqueta visible en versalitas, icono tenue,
+ * error inline, área de toque de 44x44 para el ojo de contraseña y un
+ * estado de foco con tinte lima y borde verde bosque.
  */
 const TextField = forwardRef(function TextField(
   {
@@ -125,7 +122,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   label: {
-    ...typography.label,
+    ...typography.fieldLabel,
     color: colors.textPrimary,
   },
   labelFocused: {
@@ -139,7 +136,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: sizes.input,
     backgroundColor: colors.surface,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: colors.borderInteractive,
     borderRadius: radii.md,
     paddingLeft: spacing.lg,
@@ -168,7 +165,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    minHeight: sizes.input - 4,
+    minHeight: sizes.input - 3,
     paddingVertical: spacing.md,
     paddingHorizontal: 0,
     fontSize: 16,

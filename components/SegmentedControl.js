@@ -5,12 +5,12 @@ import { useReducedMotion } from '../hooks/useReducedMotion';
 import { colors, motion, radii, shadows, spacing, typography } from '../theme';
 
 const TRACK_PADDING = 4;
-const TRACK_HEIGHT = 48;
+const TRACK_HEIGHT = 46;
 
 /**
- * Control segmentado animado para alternar entre "Iniciar sesión" y
- * "Crear cuenta". El indicador se desplaza con transform (driver nativo)
- * y cada segmento conserva un objetivo táctil de 48 px de alto.
+ * Control segmentado para alternar entre "Iniciar sesión" y "Crear cuenta".
+ * El indicador lima se desplaza con transform (driver nativo) y cada
+ * segmento mide 46 px de alto (objetivo táctil >= 44 px).
  */
 export default function SegmentedControl({
   options,
@@ -67,7 +67,7 @@ export default function SegmentedControl({
           <PressableScale
             key={option.value}
             onPress={() => onChange(option.value)}
-            pressedScale={0.98}
+            pressedScale={0.99}
             accessibilityRole="tab"
             accessibilityState={{ selected: isActive }}
             accessibilityLabel={option.label}
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     top: TRACK_PADDING,
     bottom: TRACK_PADDING,
     borderRadius: radii.pill,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.accent,
     ...shadows.pill,
   },
   segment: {
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   segmentLabelActive: {
-    color: colors.textOnPrimary,
+    color: colors.textOnAccent,
     fontWeight: '700',
   },
 });

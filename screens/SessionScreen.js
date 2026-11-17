@@ -8,6 +8,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import BrandLogo from '../components/BrandLogo';
 import InlineNotice from '../components/InlineNotice';
@@ -86,6 +87,7 @@ export default function SessionScreen({
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom', 'left', 'right']}>
+      <StatusBar style="dark" />
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
@@ -95,9 +97,7 @@ export default function SessionScreen({
       >
         <View style={styles.content}>
           <View style={styles.header}>
-            <View style={styles.logoChip}>
-              <BrandLogo width={36} decorative />
-            </View>
+            <BrandLogo width={44} decorative />
             <View style={styles.headerCopy}>
               <Text style={styles.headerOverline}>CERVECERÍA DE COLIMA</Text>
               <Text style={styles.headerTitle}>Mi cuenta</Text>
@@ -193,7 +193,7 @@ export default function SessionScreen({
               size={sizes.iconSm}
               color={colors.textMuted}
             />
-            <Text style={styles.footerText}>Conexión segura con Supabase</Text>
+            <Text style={styles.footerText}>Acceso protegido con Supabase</Text>
           </View>
         </View>
       </ScrollView>
@@ -225,16 +225,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
   },
-  logoChip: {
-    width: 48,
-    height: 48,
-    borderRadius: radii.md,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   headerCopy: {
     flex: 1,
     gap: 2,
@@ -245,7 +235,9 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
   },
   headerTitle: {
-    ...typography.subtitle,
+    ...typography.title,
+    fontSize: 20,
+    lineHeight: 26,
     color: colors.textPrimary,
   },
   hero: {
@@ -272,6 +264,8 @@ const styles = StyleSheet.create({
   },
   greeting: {
     ...typography.display,
+    fontSize: 32,
+    lineHeight: 38,
     color: colors.textPrimary,
   },
   greetingSubtitle: {
@@ -301,7 +295,7 @@ const styles = StyleSheet.create({
   },
   avatarText: {
     ...typography.subtitle,
-    color: colors.textOnPrimary,
+    color: colors.textAccentOnPrimary,
     letterSpacing: 0.5,
   },
   avatarCopy: {
