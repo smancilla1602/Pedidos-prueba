@@ -1,9 +1,18 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, Platform, StyleSheet, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import BrandLogo from './BrandLogo';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import useWebViewportFill from '../hooks/useWebViewportFill';
 import { colors, motion, radii, shadows, spacing, typography } from '../theme';
+
+// En web el overlay se ancla al viewport dinámico (position: fixed). Así,
+// cuando Safari/Chrome móvil muestran u ocultan sus barras, el verde cubre
+// de borde a borde y no queda ninguna franja con la foto del login detrás.
+const WEB_FIXED_FILL =
+  Platform.OS === 'web'
+    ? { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }
+    : null;
 
 /**
  * Splash animado de entrada.
@@ -22,6 +31,10 @@ export default function AnimatedSplash({ onFinish }) {
   const logoScale = useRef(new Animated.Value(0.92)).current;
   const captionOpacity = useRef(new Animated.Value(0)).current;
   const onFinishRef = useRef(onFinish);
+
+  // Web: 100dvh + fondo verde en html/body para que la franja de la barra
+  // del navegador nunca deje ver la fotografía del login que hay debajo.
+  useWebViewportFill(colors.splashBackground);
 
   useEffect(() => {
     onFinishRef.current = onFinish;
@@ -95,7 +108,12 @@ export default function AnimatedSplash({ onFinish }) {
 
   return (
     <Animated.View
-      style={[StyleSheet.absoluteFill, styles.overlay, { opacity: screenOpacity }]}
+      style={[
+        StyleSheet.absoluteFill,
+        styles.overlay,
+        WEB_FIXED_FILL,
+        { opacity: screenOpacity },
+      ]}
     >
       <StatusBar style="light" />
       <View style={styles.content}>

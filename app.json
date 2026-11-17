@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "backgroundColor": "#F9F8F4",
+    "backgroundColor": "#0E3B2E",
     "ios": {
       "supportsTablet": true
     },
@@ -20,7 +20,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "backgroundColor": "#F9F8F4",
+      "backgroundColor": "#0E3B2E",
       "themeColor": "#0E3B2E"
     }
   }

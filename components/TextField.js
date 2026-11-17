@@ -119,7 +119,7 @@ export default TextField;
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    gap: spacing.sm,
+    gap: 6,
   },
   label: {
     ...typography.fieldLabel,
@@ -136,11 +136,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minHeight: sizes.input,
     backgroundColor: colors.surface,
-    borderWidth: 1.5,
+    borderWidth: 1,
     borderColor: colors.borderInteractive,
     borderRadius: radii.md,
     paddingLeft: spacing.lg,
-    paddingRight: spacing.sm,
+    paddingRight: 6,
   },
   shellFocused: {
     borderColor: colors.primary,
@@ -165,8 +165,8 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    minHeight: sizes.input - 3,
-    paddingVertical: spacing.md,
+    minHeight: sizes.input - 2,
+    paddingVertical: spacing.sm + 2,
     paddingHorizontal: 0,
     fontSize: 16,
     color: colors.textPrimary,

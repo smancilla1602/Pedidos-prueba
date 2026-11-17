@@ -30,7 +30,7 @@ export const radii = {
 export const sizes = {
   minTouchTarget: 44, // mínimo táctil accesible
   control: 54, // altura de botones
-  input: 56, // altura del contenedor de campo
+  input: 52, // altura del contenedor de campo
   iconSm: 14,
   iconMd: 20,
   iconLg: 24,
@@ -164,6 +164,15 @@ export const shadows = {
     shadowOpacity: 0.1,
     shadowRadius: 36,
     elevation: 6,
+  },
+  // Tarjeta que se superpone a una fotografía (login móvil): la sombra debe
+  // leerse también por encima del borde superior del contenedor.
+  sheet: {
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: -6 },
+    shadowOpacity: 0.16,
+    shadowRadius: 28,
+    elevation: 12,
   },
   pill: {
     shadowColor: colors.shadow,

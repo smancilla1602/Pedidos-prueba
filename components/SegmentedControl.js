@@ -2,15 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 import PressableScale from './PressableScale';
 import { useReducedMotion } from '../hooks/useReducedMotion';
-import { colors, motion, radii, shadows, spacing, typography } from '../theme';
+import { colors, motion, spacing, typography } from '../theme';
 
-const TRACK_PADDING = 4;
-const TRACK_HEIGHT = 46;
+const TRACK_HEIGHT = 44;
+const TRACK_INSET = spacing.md;
+const INDICATOR_HEIGHT = 2;
 
 /**
- * Control segmentado para alternar entre "Iniciar sesión" y "Crear cuenta".
- * El indicador lima se desplaza con transform (driver nativo) y cada
- * segmento mide 46 px de alto (objetivo táctil >= 44 px).
+ * Selector editorial entre "Iniciar sesión" y "Crear cuenta".
+ * Una línea láser se desplaza bajo la pestaña activa con transform
+ * (driver nativo); cada pestaña conserva 44 px de altura táctil.
  */
 export default function SegmentedControl({
   options,
@@ -26,8 +27,8 @@ export default function SegmentedControl({
   );
   const progress = useRef(new Animated.Value(activeIndex)).current;
 
-  const segmentWidth =
-    trackWidth > 0 ? (trackWidth - TRACK_PADDING * 2) / options.length : 0;
+  const segmentWidth = trackWidth > 0 ? trackWidth / options.length : 0;
+  const indicatorWidth = Math.max(0, segmentWidth - TRACK_INSET * 2);
 
   useEffect(() => {
     Animated.timing(progress, {
@@ -51,9 +52,14 @@ export default function SegmentedControl({
           style={[
             styles.indicator,
             {
-              width: segmentWidth,
+              width: indicatorWidth,
               transform: [
-                { translateX: Animated.multiply(progress, segmentWidth) },
+                {
+                  translateX: Animated.add(
+                    Animated.multiply(progress, segmentWidth),
+                    TRACK_INSET
+                  ),
+                },
               ],
             },
           ]}
@@ -90,30 +96,24 @@ const styles = StyleSheet.create({
   track: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: TRACK_HEIGHT + TRACK_PADDING * 2 + 2,
-    padding: TRACK_PADDING,
-    borderRadius: radii.pill,
-    backgroundColor: colors.surfaceSunken,
-    borderWidth: 1,
-    borderColor: colors.border,
+    height: TRACK_HEIGHT + 2,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
     position: 'relative',
   },
   indicator: {
     position: 'absolute',
-    left: TRACK_PADDING,
-    top: TRACK_PADDING,
-    bottom: TRACK_PADDING,
-    borderRadius: radii.pill,
+    left: 0,
+    bottom: 0,
+    height: INDICATOR_HEIGHT,
+    borderRadius: 1,
     backgroundColor: colors.accent,
-    ...shadows.pill,
   },
   segment: {
     flex: 1,
-    zIndex: 1,
     height: TRACK_HEIGHT,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: radii.pill,
     paddingHorizontal: spacing.sm,
   },
   segmentLabel: {
@@ -122,7 +122,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   segmentLabelActive: {
-    color: colors.textOnAccent,
+    color: colors.textPrimary,
     fontWeight: '700',
   },
 });
+

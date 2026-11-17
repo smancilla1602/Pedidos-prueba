@@ -39,3 +39,23 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Skills y herramientas del agente
+.cline/
+.claude/skills/
+
+# Expo y builds
+.expo/
+dist/
+web-build/
+
+# Python (search.py)
+__pycache__/
+*.pyc
+
+# Capturas del agente
+shots/
+
+# Variables de entorno (claves de Supabase)
+.env
+.env.*
