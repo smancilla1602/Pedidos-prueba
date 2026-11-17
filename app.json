@@ -22,7 +22,9 @@
       "favicon": "./assets/favicon.png",
       "backgroundColor": "#0E3B2E",
       "themeColor": "#0E3B2E"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
-

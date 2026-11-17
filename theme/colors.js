@@ -4,12 +4,20 @@
  * Fuente única de verdad del color. Ningún componente declara un hex:
  * siempre consume un token semántico.
  *
- * Paleta oficial aplicada con precisión:
- * - Lienzo: #F9F8F4 (hueso / crema suave)
- * - Superficies: #FFFFFF (blanco puro)
- * - Tinta principal: #0E3B2E ("Arbusto", verde bosque profundo)
- * - Texto secundario: #5A5A55 (gris cálido)
- * - Acento: #CFD278 ("Láser", verde lima) para acción clave y estados activos
+ * Paleta oficial (cerveceriaColima.md):
+ * - Lienzo: #F9F8F4 (crema)
+ * - Superficies: #FFFFFF (blanco)
+ * - Verde bosque: #0E3B2E (títulos, líneas de campo, enlaces)
+ * - Verde azulado: #0A6B57 (botón principal)
+ * - Ámbar: #EAB227 (subrayado de pestaña y foco; nunca como texto)
+ * - Arena: #EFE6D2 (fondo de foto mientras carga)
+ * - Tinta: #1C1D1D (texto que escribe la persona)
+ * - Línea: #E8E8E1 (separadores)
+ * - Rojo: #D02E2E sobre #FFF6F6 (errores)
+ *
+ * Los tokens "lime" se conservan por compatibilidad con superficies ya
+ * publicadas; las pantallas nuevas usan los tokens `action`, `brandAccent`,
+ * `ink`, `line` y `error`.
  *
  * Contraste verificado (WCAG 2.1 AA, texto >= 4.5:1):
  * - textPrimary (#0E3B2E) sobre background (#F9F8F4): ~11.8:1
@@ -26,6 +34,15 @@ export const palette = {
   forestDeep: '#0A2E24',
   cream: '#F9F8F4',
   white: '#FFFFFF',
+  teal: '#0A6B57',
+  amber: '#EAB227',
+  sand: '#EFE6D2',
+  ink: '#1C1D1D',
+  line: '#E8E8E1',
+  red: '#D02E2E',
+  redSurface: '#FFF6F6',
+  creamTransparent: 'rgba(249, 248, 244, 0)',
+  creamFade: 'rgba(249, 248, 244, 0.72)',
   lime: '#CFD278',
   limeDeep: '#C1C566',
   limeTint: '#F3F5DC',
@@ -48,10 +65,24 @@ export const colors = {
   primaryPressed: palette.forestDeep,
   primaryTint: '#E7EDE7',
 
-  // Acento: acción clave y estados activos
+  // Acento: acción clave y estados activos (lime heredado)
   accent: palette.lime,
   accentPressed: palette.limeDeep,
   accentTint: palette.limeTint,
+
+  // Guía de marca: acción, acentos y estructura editorial
+  action: palette.teal,
+  actionPressed: palette.forest,
+  textOnAction: palette.white,
+  brandAccent: palette.amber,
+  ink: palette.ink,
+  fieldLine: palette.forest,
+  line: palette.line,
+  error: palette.red,
+  errorSurface: palette.redSurface,
+  photoPlaceholder: palette.sand,
+  photoFadeStart: palette.creamTransparent,
+  photoFadeMid: palette.creamFade,
 
   // Tipografía
   textPrimary: palette.forest,

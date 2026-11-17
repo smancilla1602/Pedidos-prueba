@@ -1,4 +1,3 @@
-import { Platform } from 'react-native';
 import { colors } from './colors';
 
 /**
@@ -19,6 +18,7 @@ export const spacing = {
 };
 
 export const radii = {
+  hairline: 2, // esquinas casi rectas: botones, placas y pestañas
   sm: 8,
   md: 12,
   lg: 16,
@@ -29,6 +29,7 @@ export const radii = {
 
 export const sizes = {
   minTouchTarget: 44, // mínimo táctil accesible
+  touchTarget: 48, // objetivo táctil de la guía de marca
   control: 54, // altura de botones
   input: 52, // altura del contenedor de campo
   iconSm: 14,
@@ -38,91 +39,87 @@ export const sizes = {
 };
 
 /**
- * Dos voces tipográficas: serif editorial para titulares (Georgia en
- * iOS/Web, serif del sistema en Android) y sans del sistema para la
- * interfaz y los formularios.
+ * Tres voces de marca, cargadas en App.js con useFonts:
+ * - Unbounded 500 Medium: títulos y botones.
+ * - Jost 400 Regular: textos, campos y pie.
+ * - Jost 500 Medium: marca, etiquetas, pestañas activas y enlaces.
  */
 export const fonts = {
-  display: Platform.select({
-    ios: 'Georgia',
-    android: 'serif',
-    default: 'Georgia',
-  }),
+  display: 'Unbounded_500Medium',
+  body: 'Jost_400Regular',
+  label: 'Jost_500Medium',
 };
 
 export const typography = {
   display: {
     fontFamily: fonts.display,
     fontSize: 36,
-    lineHeight: 42,
-    fontWeight: '400',
-    letterSpacing: -0.8,
+    lineHeight: 44,
+    letterSpacing: -0.6,
   },
   title: {
     fontFamily: fonts.display,
     fontSize: 26,
-    lineHeight: 32,
-    fontWeight: '400',
-    letterSpacing: -0.4,
+    lineHeight: 34,
+    letterSpacing: -0.3,
   },
   subtitle: {
+    fontFamily: fonts.body,
     fontSize: 18,
     lineHeight: 26,
-    fontWeight: '600',
-    letterSpacing: -0.1,
+    letterSpacing: 0,
   },
   body: {
+    fontFamily: fonts.body,
     fontSize: 16,
     lineHeight: 26,
-    fontWeight: '400',
   },
   bodyStrong: {
+    fontFamily: fonts.label,
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: '600',
   },
   label: {
+    fontFamily: fonts.label,
     fontSize: 14,
     lineHeight: 20,
-    fontWeight: '600',
-    letterSpacing: 0.1,
+    letterSpacing: 0.2,
   },
   fieldLabel: {
-    fontSize: 13,
+    fontFamily: fonts.label,
+    fontSize: 12,
     lineHeight: 18,
-    fontWeight: '600',
-    letterSpacing: 0.3,
+    letterSpacing: 0.4,
   },
   caption: {
+    fontFamily: fonts.body,
     fontSize: 13,
     lineHeight: 20,
-    fontWeight: '400',
   },
   overline: {
+    fontFamily: fonts.label,
     fontSize: 12,
     lineHeight: 16,
-    fontWeight: '700',
-    letterSpacing: 2,
+    letterSpacing: 1.6,
     textTransform: 'uppercase',
   },
   address: {
+    fontFamily: fonts.label,
     fontSize: 12,
     lineHeight: 16,
-    fontWeight: '600',
     letterSpacing: 1.6,
     textTransform: 'uppercase',
   },
   button: {
-    fontSize: 16,
+    fontFamily: fonts.display,
+    fontSize: 15,
     lineHeight: 20,
-    fontWeight: '700',
-    letterSpacing: 0.2,
+    letterSpacing: 0.1,
   },
   wordmark: {
     fontFamily: fonts.display,
     fontSize: 17,
-    lineHeight: 22,
-    fontWeight: '700',
+    lineHeight: 24,
     letterSpacing: -0.2,
   },
 };

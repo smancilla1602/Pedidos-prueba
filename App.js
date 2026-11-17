@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { useFonts } from 'expo-font';
+import { Unbounded_500Medium } from '@expo-google-fonts/unbounded';
+import { Jost_400Regular, Jost_500Medium } from '@expo-google-fonts/jost';
 import AnimatedSplash from './components/AnimatedSplash';
 import BrandLogo from './components/BrandLogo';
 import AuthScreen from './screens/AuthScreen';
@@ -37,9 +40,15 @@ export default function App() {
     clearFeedback,
   } = useAuth();
   const [splashVisible, setSplashVisible] = useState(true);
+  const [fontsLoaded, fontError] = useFonts({
+    Unbounded_500Medium,
+    Jost_400Regular,
+    Jost_500Medium,
+  });
+  const fontsReady = fontsLoaded || Boolean(fontError);
 
   let content;
-  if (initializing) {
+  if (!fontsReady || initializing) {
     content = <BootScreen />;
   } else if (session?.user) {
     content = (
