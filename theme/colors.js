@@ -112,9 +112,7 @@ export const colors = {
   // Sombras, overlays y splash
   shadow: palette.forest,
   overlay: 'rgba(10, 46, 36, 0.5)',
-  splashBackground: palette.forest,
-  splashPanel: palette.white,
-  splashTextMuted: '#D8E2DB',
+  splashBackground: palette.cream,
 
   // Fotografía inmersiva (degradado "Arbusto")
   // Sobre photoOverlayHeavy el texto crema alcanza ~10:1 de contraste.

@@ -136,14 +136,16 @@ export const layout = {
 
 /**
  * Duraciones de movimiento. La salida es más rápida que la entrada.
+ * Splash: trazo 1200 ms + reposo 900 ms + fade 350 ms ≈ 2.45 s.
  */
 export const motion = {
   fast: 140,
   base: 220,
   slow: 320,
-  splashIn: 420,
-  splashVisible: 3000,
-  splashOut: 400,
+  splashDraw: 1200,
+  splashHold: 900,
+  splashFade: 350,
+  splashReadyGrace: 2500,
   reduced: 120,
 };
 

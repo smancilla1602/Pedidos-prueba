@@ -73,7 +73,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style={splashVisible ? 'light' : 'dark'} />
+      <StatusBar style="dark" />
       <View style={[styles.root, splashVisible && styles.rootSplash]}>
         <View
           style={styles.root}
@@ -87,7 +87,10 @@ export default function App() {
 
         {/* El splash se monta encima; al desvanecerse revela la pantalla real. */}
         {splashVisible ? (
-          <AnimatedSplash onFinish={() => setSplashVisible(false)} />
+          <AnimatedSplash
+            ready={fontsReady && !initializing}
+            onFinish={() => setSplashVisible(false)}
+          />
         ) : null}
       </View>
     </SafeAreaProvider>
@@ -99,7 +102,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  // Mientras el pre-inicio está visible, el lienzo de la app es verde para
+  // Mientras el pre-inicio está visible, el lienzo de la app es crema para
   // que ninguna zona transparente del overlay revele la foto del login.
   rootSplash: {
     backgroundColor: colors.splashBackground,

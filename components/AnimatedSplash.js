@@ -1,110 +1,152 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, Platform, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Animated,
+  Easing,
+  Platform,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import BrandLogo from './BrandLogo';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import useWebViewportFill from '../hooks/useWebViewportFill';
-import { colors, motion, radii, shadows, spacing, typography } from '../theme';
+import { colors, motion, sizes } from '../theme';
 
 // En web el overlay se ancla al viewport dinámico (position: fixed). Así,
-// cuando Safari/Chrome móvil muestran u ocultan sus barras, el verde cubre
-// de borde a borde y no queda ninguna franja con la foto del login detrás.
+// cuando Safari/Chrome móvil muestran u ocultan sus barras, el lienzo crema
+// cubre de borde a borde y no queda ninguna franja con la foto del login.
 const WEB_FIXED_FILL =
   Platform.OS === 'web'
     ? { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }
     : null;
 
-/**
- * Splash animado de entrada.
- *
- * Secuencia: fade-in + escala 0.92 -> 1 del logotipo, permanencia de
- * 3000 ms para apreciar la marca y fade-out que revela la pantalla que
- * está debajo (Login o Sesión Activa). El overlay usa cobertura absoluta
- * total y un zIndex/elevation altos para flotar sobre el login en
- * iOS, Android y Web. Solo se animan `opacity` y `transform` con
- * useNativeDriver para no bloquear el hilo de JavaScript.
- */
-export default function AnimatedSplash({ onFinish }) {
-  const reducedMotion = useReducedMotion();
-  const screenOpacity = useRef(new Animated.Value(1)).current;
-  const logoOpacity = useRef(new Animated.Value(0)).current;
-  const logoScale = useRef(new Animated.Value(0.92)).current;
-  const captionOpacity = useRef(new Animated.Value(0)).current;
-  const onFinishRef = useRef(onFinish);
+const LOGO_MIN_WIDTH = 180;
+const LOGO_MAX_WIDTH = 300;
+const LOGO_WIDTH_RATIO = 0.56;
 
-  // Web: 100dvh + fondo verde en html/body para que la franja de la barra
+/**
+ * Splash de entrada con "trazo" del logotipo.
+ *
+ * Una máscara con overflow hidden crece de 0 al ancho completo del logo
+ * (1200 ms, easing suave), el logo reposa 400 ms y el overlay se desvanece
+ * (350 ms) para revelar Login o Sesión Activa. Si la app aún no está lista
+ * (fuentes/sesión), el logo se mantiene dibujado hasta que `ready` sea true
+ * o se agote `motion.splashReadyGrace`.
+ *
+ * El ancho es una propiedad de layout, así que se anima en el hilo de JS
+ * (useNativeDriver: false); la opacidad del overlay sí usa driver nativo.
+ */
+export default function AnimatedSplash({ onFinish, ready = true }) {
+  const reducedMotion = useReducedMotion();
+  const { width } = useWindowDimensions();
+  const screenOpacity = useRef(new Animated.Value(1)).current;
+  const revealWidth = useRef(new Animated.Value(0)).current;
+  const fadeRef = useRef(null);
+  const fadeStartedRef = useRef(false);
+  const onFinishRef = useRef(onFinish);
+  const [drawDone, setDrawDone] = useState(false);
+  const [holdDone, setHoldDone] = useState(false);
+
+  const logoWidth = Math.max(
+    LOGO_MIN_WIDTH,
+    Math.min(LOGO_MAX_WIDTH, Math.round(width * LOGO_WIDTH_RATIO))
+  );
+  const logoHeight = Math.ceil(logoWidth / sizes.logoAspectRatio);
+
+  // Web: 100dvh + lienzo crema en html/body para que la franja de la barra
   // del navegador nunca deje ver la fotografía del login que hay debajo.
-  useWebViewportFill(colors.splashBackground);
+  useWebViewportFill(colors.background);
 
   useEffect(() => {
     onFinishRef.current = onFinish;
   }, [onFinish]);
 
+  // Trazo: resetea la máscara y la abre de izquierda a derecha. Al terminar
+  // arranca el reposo editorial de 400 ms; un cambio de `ready` no reinicia
+  // ni el trazo ni el reposo.
   useEffect(() => {
+    if (fadeStartedRef.current) return undefined;
+
+    let active = true;
+    let holdTimer = null;
+    let draw = null;
+
     screenOpacity.setValue(1);
-    logoOpacity.setValue(0);
-    logoScale.setValue(0.92);
-    captionOpacity.setValue(0);
+    setDrawDone(false);
+    setHoldDone(false);
+    revealWidth.setValue(reducedMotion ? logoWidth : 0);
 
-    const enter = reducedMotion
-      ? Animated.parallel([
-          Animated.timing(logoOpacity, {
-            toValue: 1,
-            duration: motion.reduced,
-            useNativeDriver: true,
-          }),
-          Animated.timing(captionOpacity, {
-            toValue: 1,
-            duration: motion.reduced,
-            useNativeDriver: true,
-          }),
-        ])
-      : Animated.parallel([
-          Animated.timing(logoOpacity, {
-            toValue: 1,
-            duration: motion.splashIn,
-            easing: Easing.out(Easing.quad),
-            useNativeDriver: true,
-          }),
-          Animated.spring(logoScale, {
-            toValue: 1,
-            friction: 8,
-            tension: 55,
-            useNativeDriver: true,
-          }),
-          Animated.timing(captionOpacity, {
-            toValue: 1,
-            duration: motion.splashIn,
-            delay: 120,
-            easing: Easing.out(Easing.quad),
-            useNativeDriver: true,
-          }),
-        ]);
+    const startHold = () => {
+      if (!active) return;
+      setDrawDone(true);
+      holdTimer = setTimeout(() => {
+        if (active) setHoldDone(true);
+      }, motion.splashHold);
+    };
 
-    enter.start();
-
-    const fadeOut = Animated.timing(screenOpacity, {
-      toValue: 0,
-      duration: reducedMotion ? motion.reduced : motion.splashOut,
-      easing: Easing.in(Easing.quad),
-      useNativeDriver: true,
-    });
-
-    // El splash permanece visible 3000 ms desde el montaje; al cumplirse
-    // ese tiempo arranca el fade-out y, al terminar, se desmonta por
-    // completo para dar paso al Login o a la Sesión Activa.
-    const fadeOutTimer = setTimeout(() => {
-      fadeOut.start(({ finished }) => {
-        if (finished) onFinishRef.current?.();
+    if (reducedMotion) {
+      startHold();
+    } else {
+      draw = Animated.timing(revealWidth, {
+        toValue: logoWidth,
+        duration: motion.splashDraw,
+        easing: Easing.inOut(Easing.cubic),
+        useNativeDriver: false,
       });
-    }, motion.splashVisible);
+      draw.start(({ finished }) => {
+        if (finished) startHold();
+      });
+    }
 
     return () => {
-      clearTimeout(fadeOutTimer);
-      enter.stop();
-      fadeOut.stop();
+      active = false;
+      if (holdTimer) clearTimeout(holdTimer);
+      draw?.stop();
     };
-  }, [reducedMotion, screenOpacity, logoOpacity, logoScale, captionOpacity]);
+  }, [reducedMotion, logoWidth, revealWidth, screenOpacity]);
+
+  // Salida: cuando el trazo y el reposo terminaron, espera como máximo
+  // `splashReadyGrace` a que la app esté lista y desvanece una sola vez.
+  useEffect(() => {
+    if (!holdDone || fadeStartedRef.current) return undefined;
+
+    let graceTimer = null;
+
+    const fadeOut = () => {
+      if (fadeStartedRef.current) return;
+      fadeStartedRef.current = true;
+
+      fadeRef.current = Animated.timing(screenOpacity, {
+        toValue: 0,
+        duration: reducedMotion ? motion.reduced : motion.splashFade,
+        easing: Easing.in(Easing.quad),
+        useNativeDriver: true,
+      });
+      fadeRef.current.start(({ finished }) => {
+        if (finished) onFinishRef.current?.();
+      });
+    };
+
+    if (ready) {
+      fadeOut();
+    } else {
+      graceTimer = setTimeout(fadeOut, motion.splashReadyGrace);
+    }
+
+    return () => {
+      if (graceTimer) clearTimeout(graceTimer);
+    };
+  }, [holdDone, ready, reducedMotion, screenOpacity]);
+
+  // Si el overlay se desmonta antes de terminar (recarga o navegación),
+  // detenemos cualquier animación pendiente.
+  useEffect(
+    () => () => {
+      fadeRef.current?.stop();
+    },
+    []
+  );
 
   return (
     <Animated.View
@@ -115,21 +157,20 @@ export default function AnimatedSplash({ onFinish }) {
         { opacity: screenOpacity },
       ]}
     >
-      <StatusBar style="light" />
-      <View style={styles.content}>
-        <Animated.View
-          style={[
-            styles.logoPanel,
-            { opacity: logoOpacity, transform: [{ scale: logoScale }] },
-          ]}
-        >
-          <BrandLogo width={200} accessibilityLabel="Cervecería de Colima" />
-        </Animated.View>
+      <StatusBar style="dark" />
 
-        <Animated.View style={[styles.captionBlock, { opacity: captionOpacity }]}>
-          <View style={styles.accentRule} />
-          <Text style={styles.caption}>CERVECERÍA DE COLIMA</Text>
-          <Text style={styles.subCaption}>El Trapiche · Cuauhtémoc, Colima</Text>
+      {/* Caja fija: ancla la máscara a la izquierda para que el trazo avance
+          de izquierda a derecha (no se abre desde el centro) y la imagen
+          interna conserve su ancho real sin deformarse. */}
+      <View style={[styles.logoBox, { width: logoWidth, height: logoHeight }]}>
+        <Animated.View
+          style={[styles.mask, { width: revealWidth, height: logoHeight }]}
+        >
+          <BrandLogo
+            width={logoWidth}
+            style={styles.logoFixed}
+            accessibilityLabel="Cervecería de Colima"
+          />
         </Animated.View>
       </View>
     </Animated.View>
@@ -145,7 +186,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     height: '100%',
-    backgroundColor: colors.splashBackground,
+    backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
     // Elevation es necesario en Android para quedar por encima de las
@@ -153,38 +194,17 @@ const styles = StyleSheet.create({
     zIndex: 999,
     elevation: 999,
   },
-  content: {
-    alignItems: 'center',
-    paddingHorizontal: spacing.xxl,
+  logoBox: {
+    alignItems: 'flex-start',
   },
-  logoPanel: {
-    backgroundColor: colors.splashPanel,
-    borderRadius: radii.xxl,
-    paddingVertical: spacing.xxxl,
-    paddingHorizontal: spacing.xxl,
-    ...shadows.raised,
+  mask: {
+    overflow: 'hidden',
   },
-  captionBlock: {
-    marginTop: spacing.xxxl,
-    alignItems: 'center',
-  },
-  accentRule: {
-    width: 36,
-    height: 3,
-    borderRadius: radii.pill,
-    backgroundColor: colors.accent,
-    marginBottom: spacing.lg,
-  },
-  caption: {
-    ...typography.overline,
-    letterSpacing: 2.4,
-    color: colors.textAccentOnPrimary,
-    textAlign: 'center',
-  },
-  subCaption: {
-    ...typography.caption,
-    marginTop: spacing.sm,
-    color: colors.splashTextMuted,
-    textAlign: 'center',
+  // La imagen queda fuera del flujo flexbox para que la máscara la recorte
+  // sin encogerla ni estirarla mientras el ancho crece.
+  logoFixed: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
   },
 });
